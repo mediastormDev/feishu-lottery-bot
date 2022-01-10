@@ -39,10 +39,10 @@ async function handleRequest(request: Request) {
       return send();
     }
     
-    if (body.event.message.text_without_at_bot) {
-      const matches = body.event.message.text_without_at_bot.match(/\d+/)
+    if (body.event.text_without_at_bot) {
+      const matches = body.event.text_without_at_bot.match(/\d+/)
       if (matches) {
-        await sendMessage(
+        return sendMessage(
           accessToken,
           body.event.message.chat_id,
           `抽${matches[0]}个？`,
