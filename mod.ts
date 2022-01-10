@@ -139,7 +139,7 @@ async function getReactions(token: string, message_id: string) {
   );  
   
   if (!response.ok) {
-    console.log('resp not ok');
+    console.log(response);
     return [];
   }
   
