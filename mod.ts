@@ -38,7 +38,7 @@ async function handleRequest(request: Request) {
     const matches = body.event.text_without_at_bot.match(/\d+/)
     if (matches) {
       const accessToken = await getTenantAccessToken();
-      return sendMessage(
+      await sendMessage(
         accessToken,
         body.event.open_chat_id,
         `抽${matches[0]}个？`,
@@ -51,8 +51,6 @@ async function handleRequest(request: Request) {
     if (body.event.message.message_type !== "text") {
         return send();
      }
-    
-
     
     // 在群聊中，只有被 at 了才回复
     if (
