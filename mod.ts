@@ -56,7 +56,7 @@ async function handleRequest(request: Request) {
     if (
       body.event.message.chat_type === "group" &&
       !body.event.message.mentions?.some((x) =>
-        x.id.union_id === "on_e6b1f3bc2177c86d5d5f7858700b7972"
+        x.id.union_id === "on_e6b1f3bc2177c86d5d5f7858700b7972 aaa"
       )
       
     ) {
