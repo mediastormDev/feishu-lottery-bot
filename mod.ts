@@ -139,8 +139,11 @@ async function getReactions(token: string, message_id: string) {
   );  
   
   if (!response.ok) {
+    console.log('resp not ok');
     return [];
   }
+  
+  console.log(body);
 
   const body = await response.json();
 
