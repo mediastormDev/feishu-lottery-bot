@@ -34,15 +34,22 @@ async function handleRequest(request: Request) {
   }
 
   
-  if (body.event.text_without_at_bot) {
+  if (body.event.text_without_at_bot && body.event.parent_id.length > 0) {
     const matches = body.event.text_without_at_bot.match(/\d+/)
     if (matches) {
       const accessToken = await getTenantAccessToken();
+      //await sendMessage(
+      //  accessToken,
+      //  body.event.open_chat_id,
+      //  `抽${matches[0]}个？`,
+      //);
+      const ids = await getReactions(accessToken, body.event.parent_id)
       await sendMessage(
         accessToken,
         body.event.open_chat_id,
-        `抽${matches[0]}个？`,
+        `点赞人数${ids.length} 抽${matches[0]}个？`,
       );
+      
     }
   } 
   
@@ -117,6 +124,27 @@ async function getTenantAccessToken() {
   }
 
   return body.tenant_access_token ?? "";
+}
+
+async function getReactions(token: string, message_id: string) {
+  const response = await fetch(
+    `https://open.feishu.cn/open-apis/im/v1/messages/${message_id}/reactions`,
+    {
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        Authorization: "Bearer " + token,
+      },
+      method: "GET",
+    },
+  );  
+  
+  if (!response.ok) {
+    return [];
+  }
+
+  const body = await response.json();
+
+  return body.data.items.map((item) => item.operator.operator_id)
 }
 
 async function sendMessage(token: string, receive_id: string, text: string) {
