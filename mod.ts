@@ -39,6 +39,17 @@ async function handleRequest(request: Request) {
       return send();
     }
     
+    if (body.event.message.text_without_at_bot) {
+      const matches = body.event.message.text_without_at_bot.match(/\d+/)
+      if (matches) {
+        await sendMessage(
+          accessToken,
+          body.event.message.chat_id,
+          `抽${matches[0]}个？`,
+        );
+      }
+    }
+    
     // 在群聊中，只有被 at 了才回复
     if (
       body.event.message.chat_type === "group" &&
@@ -47,7 +58,7 @@ async function handleRequest(request: Request) {
       )
       
     ) {
-      return send();
+      // return send();
     }
 
     const accessToken = await getTenantAccessToken();
