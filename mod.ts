@@ -40,7 +40,7 @@ async function handleRequest(request: Request) {
       const accessToken = await getTenantAccessToken();
       return sendMessage(
         accessToken,
-        body.event.message.chat_id,
+        body.event.open_chat_id,
         `抽${matches[0]}个？`,
       );
     }
