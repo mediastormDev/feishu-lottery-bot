@@ -36,20 +36,21 @@ async function handleRequest(request: Request) {
   if (isMessageReceive(body)) {
     // 此处只处理 text 类型消息，其他类型消息忽略
     if (body.event.message.message_type !== "text") {
-      return send();
-    }
+      if (body.event.text_without_at_bot) {
+        const matches = body.event.text_without_at_bot.match(/\d+/)
+        if (matches) {
+          console.log(`matches = ${matches}`)
+          return sendMessage(
+            accessToken,
+            body.event.message.chat_id,
+            `抽${matches[0]}个？`,
+          );
+        }
+      } else {
+        return send();
+     }
     
-    if (body.event.text_without_at_bot) {
-      const matches = body.event.text_without_at_bot.match(/\d+/)
-      if (matches) {
-        console.log(`matches = ${matches}`)
-        return sendMessage(
-          accessToken,
-          body.event.message.chat_id,
-          `抽${matches[0]}个？`,
-        );
-      }
-    }
+
     
     // 在群聊中，只有被 at 了才回复
     if (
