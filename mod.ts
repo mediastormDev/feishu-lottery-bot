@@ -21,6 +21,8 @@ async function handleRequest(request: Request) {
   }
 
   const body = await request.json();
+  
+  console.log(body);
 
   if (isVerification(body)) {
     // 校验 verification token 是否匹配，token 不匹配说明该回调并非来自开发平台
