@@ -128,7 +128,7 @@ async function getTenantAccessToken() {
 
 async function getReactions(token: string, message_id: string) {
   const response = await fetch(
-    `https://open.feishu.cn/open-apis/im/v1/messages/${message_id}/reactions`,
+    `https://open.feishu.cn/open-apis/im/v1/messages/${message_id}/reactions?reaction_type=THUMBSUP`,
     {
       headers: {
         "Content-Type": "application/json; charset=utf-8",
@@ -139,12 +139,8 @@ async function getReactions(token: string, message_id: string) {
   );  
   
   if (!response.ok) {
-    console.log(token);
-    console.log(response);
     return [];
   }
-  
-  console.log(body);
 
   const body = await response.json();
 
