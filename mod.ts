@@ -42,6 +42,7 @@ async function handleRequest(request: Request) {
     if (body.event.text_without_at_bot) {
       const matches = body.event.text_without_at_bot.match(/\d+/)
       if (matches) {
+        console.log(`matches = ${matches}`)
         return sendMessage(
           accessToken,
           body.event.message.chat_id,
