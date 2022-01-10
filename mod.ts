@@ -33,20 +33,22 @@ async function handleRequest(request: Request) {
     return send({ challenge: body.challenge });
   }
 
+  
+  if (body.event.text_without_at_bot) {
+    const matches = body.event.text_without_at_bot.match(/\d+/)
+    if (matches) {
+      console.log(`matches = ${matches}`)
+      return sendMessage(
+        accessToken,
+        body.event.message.chat_id,
+        `抽${matches[0]}个？`,
+      );
+    }
+  } 
+  
   if (isMessageReceive(body)) {
     // 此处只处理 text 类型消息，其他类型消息忽略
     if (body.event.message.message_type !== "text") {
-      if (body.event.text_without_at_bot) {
-        const matches = body.event.text_without_at_bot.match(/\d+/)
-        if (matches) {
-          console.log(`matches = ${matches}`)
-          return sendMessage(
-            accessToken,
-            body.event.message.chat_id,
-            `抽${matches[0]}个？`,
-          );
-        }
-      } else {
         return send();
      }
     
@@ -60,7 +62,7 @@ async function handleRequest(request: Request) {
       )
       
     ) {
-      // return send();
+      return send();
     }
 
     const accessToken = await getTenantAccessToken();
