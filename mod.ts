@@ -39,12 +39,17 @@ async function handleRequest(request: Request) {
       return send();
     }
 
+    if (body.event.message.chat_type === "group") {
+      console.log(body.event.message.mentions); 
+    }
+    
     // 在群聊中，只有被 at 了才回复
     if (
       body.event.message.chat_type === "group" &&
       !body.event.message.mentions?.some((x) =>
         x.id.union_id === "on_b39234500cd99394d580892084e0d56f"
       )
+      
     ) {
       return send();
     }
