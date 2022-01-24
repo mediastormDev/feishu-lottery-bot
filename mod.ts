@@ -51,7 +51,7 @@ async function handleRequest(request: Request) {
       //);
       await randomInts(0, ids.length - 1, matches[0])
           .then((result) => result.map((index) => ids[index]))
-          .then((ids) => ids.map((id) => oidToName(accessToken, id)))
+          .then((ids) => Promise.all(ids.map((id) => oidToName(accessToken, id))))
           .then((names) => sendMessage(
               accessToken,
               body.event.open_chat_id,
