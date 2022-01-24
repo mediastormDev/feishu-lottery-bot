@@ -1,5 +1,5 @@
 import { isMessageReceive, isVerification } from "./utils.ts";
-import randomOrg from "https://dev.jspm.io/npm:random-org/RandomOrg.js";
+import RandomOrg from "https://dev.jspm.io/npm:random-org/RandomOrg.js";
 
 const APP_ID = Deno.env.get("APP_ID");
 const APP_SECRET = Deno.env.get("APP_SECRET");
