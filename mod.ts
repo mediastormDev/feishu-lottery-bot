@@ -56,7 +56,12 @@ async function handleRequest(request: Request) {
               accessToken,
               body.event.open_chat_id,
               `获奖名单：\n\n${names.join("\n")}`,
-          ));
+          ))
+          .catch((err) => sendMessage(
+              accessToken,
+              body.event.open_chat_id,
+              '抽奖失败，请检查参数后重试'
+          ))
     }
   }
 
