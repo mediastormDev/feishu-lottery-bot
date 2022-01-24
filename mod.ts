@@ -1,4 +1,5 @@
 import { isMessageReceive, isVerification } from "./utils.ts";
+import randomOrg from "https://dev.jspm.io/npm:random-org/RandomOrg.js";
 
 const APP_ID = Deno.env.get("APP_ID");
 const APP_SECRET = Deno.env.get("APP_SECRET");
@@ -44,12 +45,19 @@ async function handleRequest(request: Request) {
       //  `抽${matches[0]}个？`,
       //);
       const ids = await getReactions(accessToken, body.event.parent_id)
-      await sendMessage(
-        accessToken,
-        body.event.open_chat_id,
-        `点赞人数${ids.length} 抽${matches[0]}个？`,
-      );
-      
+      // await sendMessage(
+      //  accessToken,
+      //  body.event.open_chat_id,
+      //  `点赞人数${ids.length} 抽${matches[0]}个？`,
+      //);
+      const random = new RandomOrg({ apiKey: 'd24c53bd-0769-4bc6-9cdb-617da472417a' });
+      await generateIntegers({ 0, ids.length - 1, matches[0], replacement: false })
+        .then((result) => result.random.data)
+        .then((result) => sendMessage(
+          accessToken,
+          body.event.open_chat_id,
+          result.toString()
+        ))
     }
   } 
   
