@@ -248,4 +248,3 @@ function send(body = {}) {
 addEventListener("fetch", (event: FetchEvent) => {
     event.respondWith(handleRequest(event.request));
 });
-+
