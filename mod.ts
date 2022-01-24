@@ -35,7 +35,7 @@ async function handleRequest(request: Request) {
 
 
   if (body.event.text_without_at_bot && body.event.parent_id.length > 0) {
-    const matches = body.event.text_without_at_bot.match(/\d+/)
+    const matches = body.event.text_without_at_bot.replace(/<.*?>/g, '').match(/\d+/)
     if (matches) {
       const accessToken = await getTenantAccessToken();
       //await sendMessage(
