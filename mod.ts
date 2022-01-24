@@ -170,7 +170,7 @@ async function getReactions(token: string, message_id: string, pageToken: string
     }
 
     const body = await response.json();
-
+    console.log(body)
     const result = body.data.items.map((item) => item.operator.operator_id)
     if (body.data.has_more) {
         return result.concat(await getReactions(token, message_id, body.data.next_page_token))
