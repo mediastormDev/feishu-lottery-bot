@@ -51,7 +51,7 @@ async function handleRequest(request: Request) {
       //  `点赞人数${ids.length} 抽${matches[0]}个？`,
       //);
       const random = new RandomOrg({ apiKey: 'd24c53bd-0769-4bc6-9cdb-617da472417a' });
-      await generateIntegers({0, ids.length - 1, matches[0], replacement: false})
+      await random.generateIntegers({0, ids.length - 1, matches[0], replacement: false})
         .then((result) => result.random.data)
         .then((result) => sendMessage(
           accessToken,
