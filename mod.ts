@@ -145,6 +145,10 @@ async function oidToName(token: string, oid: string) {
       },
   )
       .then((response) => response.json())
+      .then((body) => {
+        console.log(body);
+        return body;
+      })
       .then((body) => body.data.user.name)
 }
 
