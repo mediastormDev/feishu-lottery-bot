@@ -172,8 +172,8 @@ async function randomInts(min: number, max: number, n: number) {
         })
       }
   )
-      .then(res => {
-        const json = res.json()
+      .then(async function (res) {
+        const json = await res.json()
         console.log(json)
         return json
       })
