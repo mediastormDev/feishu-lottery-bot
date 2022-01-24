@@ -53,7 +53,7 @@ async function handleRequest(request: Request) {
         .then((result) => sendMessage(
           accessToken,
           body.event.open_chat_id,
-          result.toString()
+          result.map((index) => matches[index]).toString()
         ))
     }
   }
