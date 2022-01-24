@@ -1,5 +1,4 @@
 import { isMessageReceive, isVerification } from "./utils.ts";
-import RandomOrg from "https://dev.jspm.io/npm:random-org/RandomOrg.js";
 
 const APP_ID = Deno.env.get("APP_ID");
 const APP_SECRET = Deno.env.get("APP_SECRET");
@@ -22,7 +21,7 @@ async function handleRequest(request: Request) {
   }
 
   const body = await request.json();
-  
+
   console.log(body);
 
   if (isVerification(body)) {
@@ -34,7 +33,7 @@ async function handleRequest(request: Request) {
     return send({ challenge: body.challenge });
   }
 
-  
+
   if (body.event.text_without_at_bot && body.event.parent_id.length > 0) {
     const matches = body.event.text_without_at_bot.match(/\d+/)
     if (matches) {
@@ -50,30 +49,28 @@ async function handleRequest(request: Request) {
       //  body.event.open_chat_id,
       //  `点赞人数${ids.length} 抽${matches[0]}个？`,
       //);
-      const random = new RandomOrg({ apiKey: 'd24c53bd-0769-4bc6-9cdb-617da472417a' });
-      await random.generateIntegers({0, ids.length - 1, matches[0], replacement: false})
-        .then((result) => result.random.data)
+      await randomInts(0, ids.length - 1, matches[0])
         .then((result) => sendMessage(
           accessToken,
           body.event.open_chat_id,
           result.toString()
         ))
     }
-  } 
-  
+  }
+
   if (isMessageReceive(body)) {
     // 此处只处理 text 类型消息，其他类型消息忽略
     if (body.event.message.message_type !== "text") {
         return send();
      }
-    
+
     // 在群聊中，只有被 at 了才回复
     if (
       body.event.message.chat_type === "group" &&
       !body.event.message.mentions?.some((x) =>
         x.id.union_id === "on_e6b1f3bc2177c86d5d5f7858700b7972 aaa"
       )
-      
+
     ) {
       return send();
     }
@@ -144,8 +141,8 @@ async function getReactions(token: string, message_id: string) {
       },
       method: "GET",
     },
-  );  
-  
+  );
+
   if (!response.ok) {
     return [];
   }
@@ -153,6 +150,30 @@ async function getReactions(token: string, message_id: string) {
   const body = await response.json();
 
   return body.data.items.map((item) => item.operator.operator_id)
+}
+
+async function randomInts(min: number, max: number, n: number) {
+  return fetch(
+      'https://api.random.org/json-rpc/2/invoke',
+      {
+        headers: {
+          "content-type": "application/json; charset=UTF-8",
+        },
+        method: "POST",
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          method: "generateIntegers",
+          params: {
+            apiKey: "d24c53bd-0769-4bc6-9cdb-617da472417a",
+            replacement: false,
+            min, max, n
+          },
+          "id": 1
+        })
+      }
+  )
+      .then(res => res.json())
+      .then(res => res.result.random.data)
 }
 
 async function sendMessage(token: string, receive_id: string, text: string) {
