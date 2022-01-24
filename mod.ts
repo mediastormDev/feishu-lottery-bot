@@ -50,11 +50,13 @@ async function handleRequest(request: Request) {
       //  `点赞人数${ids.length} 抽${matches[0]}个？`,
       //);
       await randomInts(0, ids.length - 1, matches[0])
-        .then((result) => sendMessage(
-          accessToken,
-          body.event.open_chat_id,
-          result.map((index) => ids[index]).toString()
-        ))
+          .then((result) => result.map((index) => ids[index]))
+          .then((ids) => ids.map((id) => oidToName(accessToken, id)))
+          .then((names) => sendMessage(
+              accessToken,
+              body.event.open_chat_id,
+              `获奖名单：\n\n${names.join("\n")}`,
+          ));
     }
   }
 
@@ -129,6 +131,21 @@ async function getTenantAccessToken() {
   }
 
   return body.tenant_access_token ?? "";
+}
+
+async function oidToName(token: string, oid: string) {
+  return fetch(
+      `https://open.feishu.cn/open-apis/contact/v3/users/${oid}`,
+      {
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          Authorization: "Bearer " + token,
+        },
+        method: "GET",
+      },
+  )
+      .then((response) => response.json())
+      .then((body) => body.data.user.name)
 }
 
 async function getReactions(token: string, message_id: string) {
