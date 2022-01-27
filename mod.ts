@@ -154,7 +154,7 @@ async function oidToName(token: string, oid: string) {
             console.log(body);
             return body;
         })
-        .then((body) => body.data.user.name)
+        .then((body) => `<at user_id="${oid}">${body.data.user.name}</at>`)
 }
 
 async function getReactions(token: string, message_id: string, pageToken: string = "") {
