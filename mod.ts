@@ -36,7 +36,7 @@ async function handleRequest(request: Request) {
 
     if (body.event.text_without_at_bot && body.event.parent_id.length > 0) {
         const matches = body.event.text_without_at_bot.replace(/<.*?>/g, '').match(/\d+/)
-        let text = `抽奖公示：\n\n抽奖总人数${ids.length}，抽${matches[0]}人\n\n`
+        let text = ''
         if (matches) {
             const accessToken = await getTenantAccessToken();
             const ids = await getReactions(accessToken, body.event.parent_id)
@@ -47,7 +47,7 @@ async function handleRequest(request: Request) {
             //);
             await randomInts(0, ids.length - 1, matches[0])
                 .then((result) => {
-                    text += `\n\n中奖序号：${result}\n\n`
+                    text = `抽奖公示：\n\n抽奖总人数${ids.length}，抽${matches[0]}人\n中奖序号：${result}\n\n`
                     return result
                 })
                 .then((result) => result.map((index) => ids[index]))
