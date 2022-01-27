@@ -36,6 +36,7 @@ async function handleRequest(request: Request) {
 
     if (body.event.text_without_at_bot && body.event.parent_id.length > 0) {
         const matches = body.event.text_without_at_bot.replace(/<.*?>/g, '').match(/\d+/)
+        let text = `抽奖公示：\n\n抽奖总人数${ids.length}，抽${matches[0]}人\n\n`
         if (matches) {
             const accessToken = await getTenantAccessToken();
             const ids = await getReactions(accessToken, body.event.parent_id)
@@ -45,12 +46,16 @@ async function handleRequest(request: Request) {
             //  `点赞人数${ids.length} 抽${matches[0]}个？`,
             //);
             await randomInts(0, ids.length - 1, matches[0])
+                .then((result) => {
+                    text += `\n\n中奖序号：${result}\n\n`
+                    return result
+                })
                 .then((result) => result.map((index) => ids[index]))
                 .then((ids) => Promise.all(ids.map((id) => oidToName(accessToken, id))))
                 .then((names) => sendMessage(
                     accessToken,
                     body.event.open_chat_id,
-                    `获奖名单：\n\n${names.join("\n")}`,
+                    `${text}获奖名单：\n\n${names.join("\n")}`,
                 ))
                 .catch((err) => sendMessage(
                     accessToken,
