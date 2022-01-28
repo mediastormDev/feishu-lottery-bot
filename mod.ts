@@ -33,8 +33,8 @@ async function handleRequest(request: Request) {
         return send({challenge: body.challenge});
     }
 
-    const accessToken = await getTenantAccessToken();
     if (body.event.text_without_at_bot && body.event.parent_id.length > 0) {
+        const accessToken = await getTenantAccessToken();
         const matches = body.event.text_without_at_bot.replace(/<.*?>/g, '').match(/\d+/)
         let text = ''
         if (matches) {
@@ -63,6 +63,7 @@ async function handleRequest(request: Request) {
                 ))
         }
     } else if (body.event.text_without_at_bot && body.event.text_without_at_bot.match('/roll')) {
+        const accessToken = await getTenantAccessToken();
         await randomInts(1, 100, 1)
             .then(async (result) => {
                 return sendMessage(
