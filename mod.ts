@@ -33,7 +33,6 @@ async function handleRequest(request: Request) {
         return send({challenge: body.challenge});
     }
 
-
     if (body.event.text_without_at_bot && body.event.parent_id.length > 0) {
         const matches = body.event.text_without_at_bot.replace(/<.*?>/g, '').match(/\d+/)
         let text = ''
@@ -63,6 +62,15 @@ async function handleRequest(request: Request) {
                     '抽奖失败，请检查参数后重试'
                 ))
         }
+    } else if (body.event.text_without_at_bot.match('/roll')) {
+        await randomInts(1, 100, 1)
+            .then(async (result) => {
+                return sendMessage(
+                    accessToken,
+                    body.event.open_chat_id,
+                    `${await oidToName(body.event.user_open_id)} ${result[0]}(1-100)`,
+                )
+            })
     }
 
     if (isMessageReceive(body)) {
