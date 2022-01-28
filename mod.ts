@@ -62,7 +62,7 @@ async function handleRequest(request: Request) {
                     '抽奖失败，请检查参数后重试'
                 ))
         }
-    } else if (body.event.text_without_at_bot.match('/roll')) {
+    } else if (body.event.text_without_at_bot && body.event.text_without_at_bot.match('/roll')) {
         await randomInts(1, 100, 1)
             .then(async (result) => {
                 return sendMessage(
