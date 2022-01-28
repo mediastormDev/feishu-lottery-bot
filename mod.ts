@@ -33,11 +33,11 @@ async function handleRequest(request: Request) {
         return send({challenge: body.challenge});
     }
 
+    const accessToken = await getTenantAccessToken();
     if (body.event.text_without_at_bot && body.event.parent_id.length > 0) {
         const matches = body.event.text_without_at_bot.replace(/<.*?>/g, '').match(/\d+/)
         let text = ''
         if (matches) {
-            const accessToken = await getTenantAccessToken();
             const ids = await getReactions(accessToken, body.event.parent_id)
             // await sendMessage(
             //  accessToken,
