@@ -69,7 +69,7 @@ async function handleRequest(request: Request) {
                 return sendMessage(
                     accessToken,
                     body.event.open_chat_id,
-                    `${await oidToName(body.event.user_open_id)} ${result[0]}(1-100)`,
+                    `${await oidToName(accessToken, body.event.user_open_id)} ${result[0]}(1-100)`,
                 )
             })
     }
