@@ -64,7 +64,7 @@ async function handleRequest(request: Request) {
         }
     } else if (body.event.text_without_at_bot && body.event.text_without_at_bot.match('/roll')) {
         const accessToken = await getTenantAccessToken();
-        await randomInts(1, 100, 1)
+        await randomInts(1, 1000, 1)
             .then(async (result) => {
                 return sendMessage(
                     accessToken,
