@@ -17,6 +17,16 @@ async function handleRequest(request: Request) {
             );
         }
 
+        if (request.url.includes('send')) {
+            const accessToken = await getTenantAccessToken()
+            const msg = new URL(req.url).searchParams.get('msg')
+            return sendMessage(
+                accessToken,
+                'ou_5ae7c8746a3c22c839c051d6ab800af5',
+                msg
+            )
+        }
+
         return send();
     }
 
