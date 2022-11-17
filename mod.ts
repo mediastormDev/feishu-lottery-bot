@@ -260,5 +260,6 @@ function send(body = {}) {
 }
 
 addEventListener("fetch", (event: FetchEvent) => {
+    console.log('event', event)
     event.respondWith(handleRequest(event.request));
 });
