@@ -173,7 +173,7 @@ async function oidToName(token: string, oid: string) {
 async function getReactions(token: string, message_id: string, pageToken: string = "") {
     const url = `https://open.feishu.cn/open-apis/im/v1/messages/${message_id}/reactions`
     const response = await fetch(
-        pageToken.length > 0 ? `${url}&page_token=${pageToken}` : url,
+        pageToken.length > 0 ? `${url}?page_token=${pageToken}` : url,
         {
             headers: {
                 "Content-Type": "application/json; charset=utf-8",
