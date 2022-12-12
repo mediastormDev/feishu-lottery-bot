@@ -38,7 +38,9 @@ async function handleRequest(request: Request) {
         const matches = body.event.text_without_at_bot.replace(/<.*?>/g, '').match(/\d+/)
         let text = ''
         if (matches) {
-            const ids = await getReactions(accessToken, body.event.parent_id)
+            let ids = await getReactions(accessToken, body.event.parent_id)
+            const set = new Set(ids)
+            const ids = Array.from(set)
             // await sendMessage(
             //  accessToken,
             //  body.event.open_chat_id,
