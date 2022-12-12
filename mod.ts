@@ -40,7 +40,7 @@ async function handleRequest(request: Request) {
         if (matches) {
             let ids = await getReactions(accessToken, body.event.parent_id)
             const set = new Set(ids)
-            const ids = Array.from(set)
+            ids = Array.from(set)
             // await sendMessage(
             //  accessToken,
             //  body.event.open_chat_id,
