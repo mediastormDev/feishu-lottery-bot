@@ -237,6 +237,7 @@ async function randomInts(min: number, max: number, n: number) {
       jsonrpc: "2.0",
       method: "generateIntegers",
       params: {
+        apiKey: "d24c53bd-0769-4bc6-9cdb-617da472417a",
         replacement: false,
         min,
         max,
