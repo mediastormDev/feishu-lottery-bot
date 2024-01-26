@@ -45,18 +45,13 @@ async function handleRequest(request: Request) {
     const set = new Set(ids);
     ids = Array.from(set);
     const resultArray: any = [];
+    const rolls = await randomInts(1, 1000, ids.length);
     for (let i = 0; i < ids.length; i++) {
       const id = ids[i];
-      //   const name = await oidToName(accessToken, id);
-      const roll = await randomInts(1, 1000, 1);
+      const roll = rolls[i];
       resultArray.push({ id, roll });
     }
     resultArray.sort((a: any, b: any) => b.roll - a.roll);
-    // resultArray.map(async (item: any, index: number) => {
-    //   if (index <= matches[0]) {
-    //     item.name = await oidToName(accessToken, item.id);
-    //   }
-    // });
     for (let i = 0; i < resultArray.length; i++) {
       const item = resultArray[i];
       if (i < matches[0]) {
@@ -68,13 +63,13 @@ async function handleRequest(request: Request) {
     const result = resultArray
       .map(
         (item: any, index: number) =>
-          `${index + 1}：${item.name}-${item.roll}点`
+          `${index + 1}：${item.name}，${item.roll}点。`
       )
       .join("\n");
     await sendMessage(
       accessToken,
       body.event.open_chat_id,
-      `抽${matches}个，roll点结果排序：\n\n${result}`
+      `抽${matches}个，骰子范围[1, 1000]，抽奖结果排序：\n\n${result}`
     );
   } else if (
     body.event.text_without_at_bot &&
