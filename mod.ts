@@ -47,11 +47,24 @@ async function handleRequest(request: Request) {
     const resultArray: any = [];
     for (let i = 0; i < ids.length; i++) {
       const id = ids[i];
-      const name = await oidToName(accessToken, id);
+      //   const name = await oidToName(accessToken, id);
       const roll = await randomInts(1, 1000, 1);
       resultArray.push({ name, roll });
     }
     resultArray.sort((a: any, b: any) => b.roll - a.roll);
+    // resultArray.map(async (item: any, index: number) => {
+    //   if (index <= matches[0]) {
+    //     item.name = await oidToName(accessToken, item.id);
+    //   }
+    // });
+    for (let i = 0; i < resultArray.length; i++) {
+      const item = resultArray[i];
+      if (i < matches[0]) {
+        item.name = await oidToName(accessToken, item.id);
+      } else {
+        item.name = await oidToName(accessToken, item.id, false);
+      }
+    }
     const result = resultArray
       .map(
         (item: any, index: number) =>
@@ -63,14 +76,6 @@ async function handleRequest(request: Request) {
       body.event.open_chat_id,
       `抽${matches}个，roll点结果排序：\n\n${result}`
     );
-    // await randomInts(1, 1000, 1)
-    //     .then(async (result) => {
-    //         return sendMessage(
-    //             accessToken,
-    //             body.event.open_chat_id,
-    //             `${await oidToName(accessToken, body.event.user_open_id)} ${result[0]}(1-1000)`,
-    //         )
-    //     })
   } else if (
     body.event.text_without_at_bot &&
     body.event.parent_id.length > 0
@@ -177,7 +182,7 @@ async function getTenantAccessToken() {
   return body.tenant_access_token ?? "";
 }
 
-async function oidToName(token: string, oid: string) {
+async function oidToName(token: string, oid: string, needAt: boolean = true) {
   return fetch(`https://open.feishu.cn/open-apis/contact/v3/users/${oid}`, {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
@@ -190,7 +195,13 @@ async function oidToName(token: string, oid: string) {
       console.log(body);
       return body;
     })
-    .then((body) => `<at user_id="${oid}">${body.data.user.name}</at>`);
+    .then((body) => {
+      if (needAt) {
+        return `<at user_id="${oid}">${body.data.user.name}</at>`;
+      } else {
+        return `${body.data.user.name}`;
+      }
+    });
 }
 
 async function getReactions(
