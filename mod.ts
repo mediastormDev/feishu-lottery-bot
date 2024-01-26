@@ -227,6 +227,7 @@ async function getReactions(
 }
 
 async function randomInts(min: number, max: number, n: number) {
+  console.log("min", min, "max", max, "n", n);
   return fetch("https://api.random.org/json-rpc/2/invoke", {
     headers: {
       "content-type": "application/json; charset=UTF-8",
