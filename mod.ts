@@ -49,7 +49,7 @@ async function handleRequest(request: Request) {
       const id = ids[i];
       //   const name = await oidToName(accessToken, id);
       const roll = await randomInts(1, 1000, 1);
-      resultArray.push({ name, roll });
+      resultArray.push({ id, roll });
     }
     resultArray.sort((a: any, b: any) => b.roll - a.roll);
     // resultArray.map(async (item: any, index: number) => {
