@@ -33,39 +33,7 @@ async function handleRequest(request: Request) {
     return send({ challenge: body.challenge });
   }
 
-  if (body.event.text_without_at_bot && body.event.parent_id.length > 0) {
-    const accessToken = await getTenantAccessToken();
-    const matches = body.event.text_without_at_bot
-      .replace(/<.*?>/g, "")
-      .match(/\d+/);
-    let text = "";
-    if (matches) {
-      let ids = await getReactions(accessToken, body.event.parent_id);
-      const set = new Set(ids);
-      ids = Array.from(set);
-      await randomInts(0, ids.length - 1, matches[0])
-        .then((result) => {
-          text = `抽奖公示：\n\n抽奖总人数${ids.length}，抽${matches[0]}人\n中奖序号：${result}\n\n`;
-          return result;
-        })
-        .then((result) => result.map((index) => ids[index]))
-        .then((ids) => Promise.all(ids.map((id) => oidToName(accessToken, id))))
-        .then((names) =>
-          sendMessage(
-            accessToken,
-            body.event.open_chat_id,
-            `${text}获奖名单：\n\n${names.join("\n")}`
-          )
-        )
-        .catch((err) =>
-          sendMessage(
-            accessToken,
-            body.event.open_chat_id,
-            "抽奖失败，请检查参数后重试"
-          )
-        );
-    }
-  } else if (
+  if (
     body.event.text_without_at_bot &&
     body.event.text_without_at_bot.match("/roll")
   ) {
@@ -103,6 +71,42 @@ async function handleRequest(request: Request) {
     //             `${await oidToName(accessToken, body.event.user_open_id)} ${result[0]}(1-1000)`,
     //         )
     //     })
+  } else if (
+    body.event.text_without_at_bot &&
+    body.event.parent_id.length > 0
+  ) {
+    const accessToken = await getTenantAccessToken();
+    const matches = body.event.text_without_at_bot
+      .replace(/<.*?>/g, "")
+      .match(/\d+/);
+    let text = "";
+    if (matches) {
+      let ids = await getReactions(accessToken, body.event.parent_id);
+      const set = new Set(ids);
+      ids = Array.from(set);
+      await randomInts(0, ids.length - 1, matches[0])
+        .then((result) => {
+          text = `抽奖公示：\n\n抽奖总人数${ids.length}，抽${matches[0]}人\n中奖序号：${result}\n\n`;
+          return result;
+        })
+        .then((result) => result.map((index) => ids[index]))
+        .then((ids) => Promise.all(ids.map((id) => oidToName(accessToken, id))))
+        .then((names) =>
+          sendMessage(
+            accessToken,
+            body.event.open_chat_id,
+            `${text}获奖名单：\n\n${names.join("\n")}`
+          )
+        )
+        .catch((err) => {
+          sendMessage(
+            accessToken,
+            body.event.open_chat_id,
+            "抽奖失败，请检查参数后重试"
+          );
+          console.error(err);
+        });
+    }
   }
 
   if (isMessageReceive(body)) {
