@@ -224,6 +224,7 @@ async function oidToNameBatch(
     })
     .then((body) => {
       const userNames: string[] = [];
+      console.log("body", JSON.stringify(body));
       if (body.data.items && body.data.items.length > 0) {
         for (let index = 0; index < body.data.items.length; index++) {
           const userInfo = body.data.items[index];
