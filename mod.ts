@@ -58,9 +58,11 @@ async function handleRequest(request: Request) {
         item.name = await oidToName(accessToken, item.id, false);
       }
     }
-    // const oids = resultArray.map((item: any) => item.id);
-    // const newResultArray = await oidToNameBatch(accessToken, oids, matches[0]);
-
+    const oids = resultArray.map((item: any) => item.id);
+    const newResultArray = await oidToNameBatch(accessToken, oids, matches[0]);
+    resultArray.forEach((item: any, index: number) => {
+      item.name = newResultArray[index];
+    });
     const result = resultArray
       .map(
         (item: any, index: number) =>
