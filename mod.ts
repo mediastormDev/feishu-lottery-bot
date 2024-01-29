@@ -206,7 +206,7 @@ async function oidToNameBatch(
   matchNumber: number
 ) {
   return fetch(
-    `https://open.feishu.cn/open-apis/contact/v3/users/batch?=${oids.map(
+    `https://open.feishu.cn/open-apis/contact/v3/users/batch?${oids.map(
       (it) => `user_ids=${it}&`
     )}`,
     {
