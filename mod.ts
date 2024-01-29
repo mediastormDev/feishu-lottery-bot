@@ -210,7 +210,7 @@ async function oidToNameBatch(
       "Content-Type": "application/json; charset=utf-8",
       Authorization: "Bearer " + token,
     },
-    method: "GET",
+    method: "POST",
     body: JSON.stringify({ user_ids: oids }),
   })
     .then((response) => response.json())
