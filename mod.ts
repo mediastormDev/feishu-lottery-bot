@@ -50,18 +50,18 @@ async function handleRequest(request: Request) {
       resultArray.push({ id, roll });
     }
     resultArray.sort((a: any, b: any) => b.roll - a.roll);
-    // for (let i = 0; i < resultArray.length; i++) {
-    //   const item = resultArray[i];
-    //   if (i < matches[0]) {
-    //     item.name = await oidToName(accessToken, item.id);
-    //   } else {
-    //     item.name = await oidToName(accessToken, item.id, false);
-    //   }
-    // }
-    const oids = resultArray.map((item: any) => item.id);
-    const newResultArray = await oidToNameBatch(accessToken, oids, matches[0]);
+    for (let i = 0; i < resultArray.length; i++) {
+      const item = resultArray[i];
+      if (i < matches[0]) {
+        item.name = await oidToName(accessToken, item.id);
+      } else {
+        item.name = await oidToName(accessToken, item.id, false);
+      }
+    }
+    // const oids = resultArray.map((item: any) => item.id);
+    // const newResultArray = await oidToNameBatch(accessToken, oids, matches[0]);
 
-    const result = newResultArray
+    const result = resultArray
       .map(
         (item: any, index: number) =>
           `${index + 1}：${item.name}，${item.roll}点。`
