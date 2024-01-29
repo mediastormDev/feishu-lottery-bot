@@ -205,14 +205,18 @@ async function oidToNameBatch(
   oids: string[],
   matchNumber: number
 ) {
-  return fetch(`https://open.feishu.cn/open-apis/contact/v3/users/batch`, {
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-      Authorization: "Bearer " + token,
-    },
-    method: "POST",
-    body: JSON.stringify({ user_ids: oids }),
-  })
+  return fetch(
+    `https://open.feishu.cn/open-apis/contact/v3/users/batch?=${oids.map(
+      (it) => `user_ids=${it}`
+    )}`,
+    {
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        Authorization: "Bearer " + token,
+      },
+      method: "GET",
+    }
+  )
     .then((response) => response.json())
     .then((body) => {
       console.log(body);
