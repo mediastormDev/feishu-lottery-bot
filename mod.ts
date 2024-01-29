@@ -50,15 +50,18 @@ async function handleRequest(request: Request) {
       resultArray.push({ id, roll });
     }
     resultArray.sort((a: any, b: any) => b.roll - a.roll);
-    for (let i = 0; i < resultArray.length; i++) {
-      const item = resultArray[i];
-      if (i < matches[0]) {
-        item.name = await oidToName(accessToken, item.id);
-      } else {
-        item.name = await oidToName(accessToken, item.id, false);
-      }
-    }
-    const result = resultArray
+    // for (let i = 0; i < resultArray.length; i++) {
+    //   const item = resultArray[i];
+    //   if (i < matches[0]) {
+    //     item.name = await oidToName(accessToken, item.id);
+    //   } else {
+    //     item.name = await oidToName(accessToken, item.id, false);
+    //   }
+    // }
+    const oids = resultArray.map((item: any) => item.id);
+    const newResultArray = await oidToNameBatch(accessToken, oids, matches[0]);
+
+    const result = newResultArray
       .map(
         (item: any, index: number) =>
           `${index + 1}：${item.name}，${item.roll}点。`
@@ -194,6 +197,42 @@ async function oidToName(token: string, oid: string, needAt: boolean = true) {
       } else {
         return `${body.data.user.name}`;
       }
+    });
+}
+
+async function oidToNameBatch(
+  token: string,
+  oids: string[],
+  matchNumber: number
+) {
+  return fetch(`https://open.feishu.cn/open-apis/contact/v3/users/batch`, {
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      Authorization: "Bearer " + token,
+    },
+    method: "GET",
+    body: JSON.stringify({ user_ids: oids }),
+  })
+    .then((response) => response.json())
+    .then((body) => {
+      console.log(body);
+      return body;
+    })
+    .then((body) => {
+      const userNames: string[] = [];
+      if (body.data.items && body.data.items.length > 0) {
+        for (let index = 0; index < body.data.items.length; index++) {
+          const userInfo = body.data.items[index];
+          if (index < matchNumber) {
+            userNames.push(
+              `<at user_id="${userInfo.open_id}">${userInfo.name}</at>`
+            );
+          } else {
+            userNames.push(`${userInfo.name}`);
+          }
+        }
+      }
+      return userNames;
     });
 }
 
