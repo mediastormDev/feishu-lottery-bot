@@ -35,7 +35,27 @@ async function handleRequest(request: Request) {
 
   // body.event.text_without_at_bot.match("/roll")
   console.log("object :>> ", JSON.stringify(body));
-  if (body.event.text_without_at_bot && body.event.parent_id.length > 0) {
+
+  if (
+    body.event.chat_type === "group" &&
+    body.event.is_mention &&
+    body.event.text.indexOf("ou_8309f414b1fb61ded97bf55cc9e91651")
+  ) {
+    const accessToken = await getTenantAccessToken();
+    await sendMessage(
+      accessToken,
+      body.event.open_chat_id,
+      `测试用: ${body.event}`
+    );
+    return send();
+  }
+
+  if (
+    body.event.chat_type === "group" &&
+    body.event.is_mention &&
+    body.event.text_without_at_bot &&
+    body.event.parent_id.length > 0
+  ) {
     const matches = body.event.text_without_at_bot
       .replace(/<.*?>/g, "")
       .match(/\d+/);
@@ -82,19 +102,6 @@ async function handleRequest(request: Request) {
     );
   }
 
-  if (
-    body.event.chat_type === "group" &&
-    body.event.message.mentions?.some(
-      (x) => x.id.union_id === "on_8e427e0d79b0896341550d486fcacfb5"
-    )
-  ) {
-    const accessToken = await getTenantAccessToken();
-    await sendMessage(
-      accessToken,
-      body.event.open_chat_id,
-      `测试用: ${body.event}`
-    );
-  }
   if (isMessageReceive(body)) {
     // 此处只处理 text 类型消息，其他类型消息忽略
     if (body.event.message.message_type !== "text") {
