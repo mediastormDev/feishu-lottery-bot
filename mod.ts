@@ -4,6 +4,8 @@ const APP_ID = Deno.env.get("APP_ID");
 const APP_SECRET = Deno.env.get("APP_SECRET");
 const APP_VERIFICATION_TOKEN = Deno.env.get("APP_VERIFICATION_TOKEN");
 
+const oidTemp = {};
+
 async function handleRequest(request: Request) {
   // 只接收 POST 请求
   if (request.method.toUpperCase() !== "POST") {
@@ -181,25 +183,35 @@ async function getTenantAccessToken() {
 }
 
 async function oidToName(token: string, oid: string, needAt: boolean = true) {
-  return fetch(`https://open.feishu.cn/open-apis/contact/v3/users/${oid}`, {
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-      Authorization: "Bearer " + token,
-    },
-    method: "GET",
-  })
-    .then((response) => response.json())
-    .then((body) => {
-      console.log(body);
-      return body;
+  if (oidTemp[oid]) {
+    const user = oidTemp[oid];
+    if (needAt) {
+      return `<at user_id="${oid}">${user.name}</at>`;
+    } else {
+      return `${user.name}`;
+    }
+  } else {
+    return fetch(`https://open.feishu.cn/open-apis/contact/v3/users/${oid}`, {
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        Authorization: "Bearer " + token,
+      },
+      method: "GET",
     })
-    .then((body) => {
-      if (needAt) {
-        return `<at user_id="${oid}">${body.data.user.name}</at>`;
-      } else {
-        return `${body.data.user.name}`;
-      }
-    });
+      .then((response) => response.json())
+      .then((body) => {
+        console.log(body);
+        return body;
+      })
+      .then((body) => {
+        oidTemp[oid] = body.data.user;
+        if (needAt) {
+          return `<at user_id="${oid}">${body.data.user.name}</at>`;
+        } else {
+          return `${body.data.user.name}`;
+        }
+      });
+  }
 }
 
 async function oidToNameBatch(
