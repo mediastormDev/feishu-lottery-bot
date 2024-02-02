@@ -36,19 +36,19 @@ async function handleRequest(request: Request) {
   // body.event.text_without_at_bot.match("/roll")
   console.log("object :>> ", JSON.stringify(body));
 
-  if (
-    body.event.chat_type === "group" &&
-    body.event.is_mention &&
-    body.event.text.indexOf("ou_8309f414b1fb61ded97bf55cc9e91651")
-  ) {
-    const accessToken = await getTenantAccessToken();
-    await sendMessage(
-      accessToken,
-      body.event.open_chat_id,
-      `测试用: ${body.event}`
-    );
-    return send();
-  }
+  // if (
+  //   body.event.chat_type === "group" &&
+  //   body.event.is_mention &&
+  //   body.event.text.indexOf("ou_8309f414b1fb61ded97bf55cc9e91651")
+  // ) {
+  //   const accessToken = await getTenantAccessToken();
+  //   await sendMessage(
+  //     accessToken,
+  //     body.event.open_chat_id,
+  //     `测试用: ${body.event}`
+  //   );
+  //   return send();
+  // }
 
   if (
     body.event.chat_type === "group" &&
