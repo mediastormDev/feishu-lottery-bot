@@ -44,7 +44,7 @@ async function handleRequest(request: Request) {
     let ids = await getReactions(accessToken, body.event.parent_id);
     if (!ids || ids.length === 0) {
       console.log("error :>> ", body.event);
-      return;
+      return send();
     }
     const set = new Set(ids);
     ids = Array.from(set);
