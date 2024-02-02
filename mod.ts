@@ -42,9 +42,14 @@ async function handleRequest(request: Request) {
       .match(/\d+/);
     const accessToken = await getTenantAccessToken();
     let ids = await getReactions(accessToken, body.event.parent_id);
+    if (!ids || ids.length === 0) {
+      console.log("error :>> ", body.event);
+      return;
+    }
     const set = new Set(ids);
     ids = Array.from(set);
     const resultArray: any = [];
+
     const rolls = await randomInts(1, 1000, ids.length);
     for (let i = 0; i < ids.length; i++) {
       const id = ids[i];
@@ -281,6 +286,9 @@ async function getReactions(
 
 async function randomInts(min: number, max: number, n: number) {
   console.log("min", min, "max", max, "n", n);
+  if (n < min) {
+    return;
+  }
   return fetch("https://api.random.org/json-rpc/2/invoke", {
     headers: {
       "content-type": "application/json; charset=UTF-8",
