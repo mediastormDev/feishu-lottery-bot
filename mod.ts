@@ -35,7 +35,7 @@ async function handleRequest(request: Request) {
 
   // body.event.text_without_at_bot.match("/roll")
   if (
-    body.event.message.chat_type === "group" &&
+    body.event.chat_type === "group" &&
     body.event.text_without_at_bot &&
     body.event.parent_id.length > 0
   ) {
