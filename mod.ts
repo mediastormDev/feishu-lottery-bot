@@ -183,35 +183,26 @@ async function getTenantAccessToken() {
 }
 
 async function oidToName(token: string, oid: string, needAt: boolean = true) {
-  if (oidTemp[oid]) {
-    const user = oidTemp[oid];
-    if (needAt) {
-      return `<at user_id="${oid}">${user.name}</at>`;
-    } else {
-      return `${user.name}`;
-    }
-  } else {
-    return fetch(`https://open.feishu.cn/open-apis/contact/v3/users/${oid}`, {
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        Authorization: "Bearer " + token,
-      },
-      method: "GET",
+  return fetch(`https://open.feishu.cn/open-apis/contact/v3/users/${oid}`, {
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      Authorization: "Bearer " + token,
+    },
+    method: "GET",
+  })
+    .then((response) => response.json())
+    .then((body) => {
+      console.log(body);
+      return body;
     })
-      .then((response) => response.json())
-      .then((body) => {
-        console.log(body);
-        return body;
-      })
-      .then((body) => {
-        oidTemp[oid] = body.data.user;
-        if (needAt) {
-          return `<at user_id="${oid}">${body.data.user.name}</at>`;
-        } else {
-          return `${body.data.user.name}`;
-        }
-      });
-  }
+    .then((body) => {
+      oidTemp[oid] = body.data.user;
+      if (needAt) {
+        return `<at user_id="${oid}">${body.data.user.name}</at>`;
+      } else {
+        return `${body.data.user.name}`;
+      }
+    });
 }
 
 async function oidToNameBatch(
