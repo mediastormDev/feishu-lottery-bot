@@ -4,8 +4,6 @@ const APP_ID = Deno.env.get("APP_ID");
 const APP_SECRET = Deno.env.get("APP_SECRET");
 const APP_VERIFICATION_TOKEN = Deno.env.get("APP_VERIFICATION_TOKEN");
 
-const oidTemp = {};
-
 async function handleRequest(request: Request) {
   // 只接收 POST 请求
   if (request.method.toUpperCase() !== "POST") {
@@ -36,7 +34,11 @@ async function handleRequest(request: Request) {
   }
 
   // body.event.text_without_at_bot.match("/roll")
-  if (body.event.text_without_at_bot && body.event.parent_id.length > 0) {
+  if (
+    body.event.message.chat_type === "group" &&
+    body.event.text_without_at_bot &&
+    body.event.parent_id.length > 0
+  ) {
     const matches = body.event.text_without_at_bot
       .replace(/<.*?>/g, "")
       .match(/\d+/);
@@ -81,44 +83,21 @@ async function handleRequest(request: Request) {
       body.event.open_chat_id,
       `抽奖公示：\n\n抽奖总人数${ids.length}，抽${matches[0]}人，\n骰子范围[1, 1000]，\n抽奖结果排序：\n\n${result}`
     );
-  } else if (
-    body.event.text_without_at_bot &&
-    body.event.parent_id.length > 0
-  ) {
-    const accessToken = await getTenantAccessToken();
-    const matches = body.event.text_without_at_bot
-      .replace(/<.*?>/g, "")
-      .match(/\d+/);
-    let text = "";
-    if (matches) {
-      let ids = await getReactions(accessToken, body.event.parent_id);
-      const set = new Set(ids);
-      ids = Array.from(set);
-      await randomInts(0, ids.length - 1, matches[0])
-        .then((result) => {
-          text = `抽奖公示：\n\n抽奖总人数${ids.length}，抽${matches[0]}人\n中奖序号：${result}\n\n`;
-          return result;
-        })
-        .then((result) => result.map((index) => ids[index]))
-        .then((ids) => Promise.all(ids.map((id) => oidToName(accessToken, id))))
-        .then((names) =>
-          sendMessage(
-            accessToken,
-            body.event.open_chat_id,
-            `${text}获奖名单：\n\n${names.join("\n")}`
-          )
-        )
-        .catch((err) => {
-          sendMessage(
-            accessToken,
-            body.event.open_chat_id,
-            "抽奖失败，请检查参数后重试"
-          );
-          console.error(err);
-        });
-    }
   }
 
+  if (
+    body.event.message.chat_type === "group" &&
+    body.event.message.mentions?.some(
+      (x) => x.id.union_id === "on_8e427e0d79b0896341550d486fcacfb5"
+    )
+  ) {
+    const accessToken = await getTenantAccessToken();
+    await sendMessage(
+      accessToken,
+      body.event.open_chat_id,
+      `测试用: ${body.event}`
+    );
+  }
   if (isMessageReceive(body)) {
     // 此处只处理 text 类型消息，其他类型消息忽略
     if (body.event.message.message_type !== "text") {
@@ -201,7 +180,6 @@ async function oidToName(token: string, oid: string, needAt: boolean = true) {
       return body;
     })
     .then((body) => {
-      oidTemp[oid] = body.data.user;
       if (needAt) {
         return `<at user_id="${oid}">${body.data.user.name}</at>`;
       } else {
