@@ -34,11 +34,8 @@ async function handleRequest(request: Request) {
   }
 
   // body.event.text_without_at_bot.match("/roll")
-  if (
-    body.event.chat_type === "group" &&
-    body.event.text_without_at_bot &&
-    body.event.parent_id.length > 0
-  ) {
+  console.log("object :>> ", JSON.stringify(body));
+  if (body.event.text_without_at_bot && body.event.parent_id.length > 0) {
     const matches = body.event.text_without_at_bot
       .replace(/<.*?>/g, "")
       .match(/\d+/);
@@ -86,7 +83,7 @@ async function handleRequest(request: Request) {
   }
 
   if (
-    body.event.message.chat_type === "group" &&
+    body.event.chat_type === "group" &&
     body.event.message.mentions?.some(
       (x) => x.id.union_id === "on_8e427e0d79b0896341550d486fcacfb5"
     )
