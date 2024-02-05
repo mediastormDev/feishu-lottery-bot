@@ -76,19 +76,30 @@ async function handleRequest(request: Request) {
       resultArray.push({ id, roll });
     }
     resultArray.sort((a: any, b: any) => b.roll - a.roll);
-    for (let i = 0; i < resultArray.length; i++) {
-      const item = resultArray[i];
-      if (i < matches[0]) {
-        item.name = await oidToName(accessToken, item.id);
-      } else {
-        item.name = await oidToName(accessToken, item.id, false);
+    // for (let i = 0; i < resultArray.length; i++) {
+    //   const item = resultArray[i];
+    //   if (i < matches[0]) {
+    //     item.name = await oidToName(accessToken, item.id);
+    //   } else {
+    //     item.name = await oidToName(accessToken, item.id, false);
+    //   }
+    // }
+    const oids = resultArray.map((item: any) => item.id);
+    const newResultArray = await oidToNameBatch(accessToken, oids, matches[0]);
+    console.log("resultArray", resultArray);
+    console.log("newResultArray", newResultArray);
+    if (
+      resultArray &&
+      newResultArray &&
+      resultArray.length === newResultArray.length
+    ) {
+      for (let index = 0; index < resultArray.length; index++) {
+        const element = resultArray[index];
+        const name = newResultArray[index];
+        element.name = name;
       }
     }
-    // const oids = resultArray.map((item: any) => item.id);
-    // const newResultArray = await oidToNameBatch(accessToken, oids, matches[0]);
-    // resultArray.forEach((item: any, index: number) => {
-    //   item.name = newResultArray[index];
-    // })
+
     const result = resultArray
       .map(
         (item: any, index: number) =>
