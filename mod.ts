@@ -239,8 +239,8 @@ async function oidToNameBatch(
             userNames.push(`${userInfo.name}`);
           }
         }
-        return userNames;
       }
+      return userNames;
     });
 }
 
