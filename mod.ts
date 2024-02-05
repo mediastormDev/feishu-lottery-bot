@@ -208,10 +208,13 @@ async function oidToNameBatch(
   oids: string[],
   matchNumber: number
 ) {
+  let tempStr = "";
+  oids.map((it) => {
+    tempStr += `user_ids=${it}&`;
+  });
+  console.log("namesnamesnames", tempStr);
   return fetch(
-    `https://open.feishu.cn/open-apis/contact/v3/users/batch?${oids.map(
-      (it) => `user_ids=${it}&`
-    )}`,
+    `https://open.feishu.cn/open-apis/contact/v3/users/batch?${tempStr}`,
     {
       headers: {
         "Content-Type": "application/json; charset=utf-8",
