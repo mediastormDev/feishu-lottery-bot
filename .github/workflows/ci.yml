@@ -4,16 +4,19 @@ on: [push, pull_request]
 
 jobs:
   build:
-    name: ${{ matrix.kind }} ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [macOS-latest, ubuntu-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Setup Deno
         uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
 
       - name: Format check
         run: deno fmt --check
@@ -23,5 +26,8 @@ jobs:
           deno install -Afr --no-check https://deno.land/x/deploy/deployctl.ts
           deployctl check mod.ts
 
-      - name: Tests
-        run: deno test --unstable
+      - name: Run tests
+        run: deno test --unstable --allow-all
+
+      - name: Start application
+        run: deno run --allow-net --allow-read mod.ts
