@@ -109,7 +109,7 @@ async function handleRequest(request: Request) {
     await sendMessage(
       accessToken,
       body.event.open_chat_id,
-      `抽奖公示：\n\n抽奖总人数${ids.length}，抽${matches[0]}人，\n骰子范围[1, 1000]，\n抽奖结果排序：\n\n${result}`
+      `!抽奖公示：\n\n抽奖总人数${ids.length}，抽${matches[0]}人，\n骰子范围[1, 1000]，\n抽奖结果排序：\n\n${result}`
     );
   }
 
